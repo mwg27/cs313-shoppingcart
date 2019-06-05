@@ -2,6 +2,29 @@
 $varadd = $_GET['addwhat'];
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
+
+    $userId = $_SESSION["userID"];
+    if(! isset($userId)){
+        header("Location: login.php");
+    } else {
+        if(!isset($varadd)){
+            header("Location: shopping.php");
+        } else {
+            $servername = "localhost";
+            $username = "mike";
+            $password = "!1Goulding0)";
+            $dbname = "mike";
+            $conn = new mysqli($servername, $username, $password, $dbname);
+            $sql = sprintf("SELECT * FROM products where productID='%s'",$varadd);
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $products = $row["name"];
+            $prices = $row["price"];
+            $images = $row["picFileName"];
+            $itemid = $row["productID"];
+            $desc = $row["description"];  
+        }       
+    }    
 }
 ?>
 
@@ -16,13 +39,14 @@ if (session_status() == PHP_SESSION_NONE) {
     <body> 
         <div class="titlediv">
             <?php
-            $p = $_SESSION["product"];
-            $pr = $_SESSION["price"];
-            $img = $_SESSION["image"];
-            echo "<h4>$p[$varadd]</h4><br>";
-            echo "<img src=\"img/shop/$img[$varadd]\" class=\"addimage\">";
+            $p = $products;
+            $pr = $prices;
+            $img = $images;
+            echo "<h4>$p</h4><br>";
+            echo "<img src=\"img/shop/$img\" class=\"addimage\">";
             echo "&nbsp;";
-            echo "$$pr[$varadd]";
+            echo "$$pr";
+            echo "<br>$desc";
             ?>
             <form action="cart.php" method="post">
             <?php

@@ -2,27 +2,44 @@
 // Start the session
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-    $products = array("Dremel set w/ heads","Electric Hand sander","Band Saw","Table Saw","Airbrush w/ compressor","Heat Gun","Soldering Iron","Shop Vac","Laser cutter","3D Printer");
-    $prices = array(44.99,54.99,374.99,427.00,87.99,37.99,67.25,99.00,6997.00,248.99);
-    $images = array("dremel_set.jpeg","sander.jpg","band_saw.jpg","tablesaw.jpg","airbrush_compressor.jpg","heatgun.jpg","solderingiron.png","shopvac.jpg","lasercutter.jpg","3d_printer.jpg");
 
-
-    $_SESSION["product"] = $products;
-    $_SESSION["price"] = $prices;
-    $_SESSION["image"] = $images;
-    if ( ! isset($_SESSION['cart'])) 
-        $_SESSION['cart'] = array();
-    if ( ! isset($_SESSION['qtyarray'])) 
-        $_SESSION['qtyarray'] = array();
-    if( count($_SESSION['cart']) != count($_SESSION['qtyarray'])){
-        unset($_SESSION['cart']);
-        unset($_SESSION['qtyarray']);
-        $_SESSION['cart'] = array();
-        $_SESSION['qtyarray'] = array();
+    $userId = $_SESSION["userID"];
+    if(! isset($userId)){
+        header("Location: login.php");
+    } else {
+        $products = array();
+        $prices = array();
+        $images = array();
+        $itemid = array();
+    
+        $servername = "localhost";
+        $username = "mike";
+        $password = "!1Goulding0)";
+        $dbname = "mike";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        $sql = "SELECT * FROM products";
+        $result = $conn->query($sql);
+        while($row = $result->fetch_assoc()) {
+            $products[] = $row["name"];
+            $prices[] = $row["price"];
+            $images[] = $row["picFileName"];
+            $itemid[] = $row["productID"];
+        }
+        $cnt = 0;
+        $sql = sprintf("SELECT cartID FROM shoppingCart where userId='%s'",$userId);
+        $result = $conn->query($sql);
+        if( $result->num_rows > 0 ){
+            $row = $result->fetch_assoc();
+            $cartId = $row["cartID"];
+            $sql = sprintf("select count(*) from shopCartItem where cartID='%s'",$cartId);
+            $result = $conn->query($sql);
+            if( $result->num_rows > 0 ){
+                $row = $result->fetch_assoc();
+                $cnt = $row["count(*)"];
+            }
+        }
     }
 }
-
-
 
 ?>
 
@@ -40,8 +57,6 @@ if (session_status() == PHP_SESSION_NONE) {
            <div class="cartpos">
                 <a href="cart.php"><img src="img/cart.jpg" width="64" height="64"></a>
                 <?php
-                        $c = $_SESSION["cart"];
-                        $cnt = count($c);
                     echo "Items in Cart: $cnt<br>";
                 ?>
            </div >
@@ -57,16 +72,17 @@ if (session_status() == PHP_SESSION_NONE) {
                     <tbody>
                     <?php
                             $index = 0;
-                            $p = $_SESSION["product"];
-                            $pr = $_SESSION["price"];
-                            $img = $_SESSION["image"];
+                            $p = $products;
+                            $pr = $prices;
+                            $img = $images;
+                            $id = $itemid;
                             for($i=0; $i<count($p); $i++){
                                 echo "<tr class=\"tablerow\">";
                                 echo "<td> <img src=\"img/shop/$img[$i]\" class=\"tableimage\" ></td>";
                                 echo "<td> $p[$i] </td>";
                                 $rnd = number_format((float)$pr[$i], 2, '.', '');
                                 echo "<td> $$rnd </td>";
-                                echo "<td> <a href=\"addtocart.php?addwhat=$i\"><img src=\"img/details.png\" width=\"188\" height=\"50\"></a> </td>";
+                                echo "<td> <a href=\"addtocart.php?addwhat=$id[$i]\"><img src=\"img/details.png\" width=\"188\" height=\"50\"></a> </td>";
                                 echo "</tr>";
                                 $index++;
                             }                

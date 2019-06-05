@@ -61,4 +61,51 @@ label {
 .checkoutln {
     height: 26px;
 }
-  
+
+.loginbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    height: 160px;
+    width: 470px;
+    margin-left: 35%;
+    margin-top: 35px;
+}
+
+.loginlabel {
+    width:140px;
+}
+
+.loginimage {
+    width: 128;
+    height: 128;
+}
+.loginimagediv {
+    margin-top: 20px;
+    float: left;
+}
+
+.loginbtn {
+    width: 98px;
+    height: 36px;
+    margin-top: 5px;
+    margin-left: 50px;
+}
+
+.createbtn {
+    width: 98px;
+    height: 36px;
+    margin-top: 10px;
+}
+
+.createbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    height: 200px;
+    width: 470px;
+    margin-left: 35%;
+    margin-top: 35px;
+}
+
+.errormsg {
+    color: red;
+}

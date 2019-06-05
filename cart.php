@@ -4,29 +4,68 @@ $varqty = $_POST['quantity'];
 $varremove = $_GET['remove'];
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-}
-if( isset($varadd)){
-    $cart = $_SESSION["cart"];
-    $cart[] = $varadd;
-    $_SESSION["cart"] = $cart;  
-    $qty = $_SESSION["qtyarray"];
-    $qty[] = $varqty;
-    $_SESSION["qtyarray"] = $qty;
-}
-if( isset($varremove)){
-    $orgcart = $_SESSION["cart"];
-    $orgqty = $_SESSION["qtyarray"];
-    $cart = array();
-    $qty = array();
-    for($i=0; $i<count($orgcart); $i++){
-        if( $i != $varremove){
-            $cart[] = $orgcart[$i];
-            $qty[] = $orgqty[$i];
+
+    $userId = $_SESSION["userID"];
+    $servername = "localhost";
+    $username = "mike";
+    $password = "!1Goulding0)";
+    $dbname = "mike";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if(! isset($userId)){
+        header("Location: login.php");
+    } else {
+        //see if there is a cart for this user
+        $sql = sprintf("SELECT cartID FROM shoppingCart where userId='%s'",$userId);
+        $result = $conn->query($sql);
+        if( $result->num_rows > 0 ){
+            $row = $result->fetch_assoc();
+            $cartId = $row["cartID"];
+        } else {
+            $sql = sprintf("INSERT INTO shoppingCart (cartID, userId) VALUES('0','%s')",$userId);
+            $result = $conn->query($sql);
+            if ($result === TRUE) {
+                $sql = sprintf("SELECT cartID FROM shoppingCart where userId='%s'",$userId);
+                $result = $conn->query($sql);
+                if( $result->num_rows > 0 ){
+                    $row = $result->fetch_assoc();
+                    $cartId = $row["cartID"];
+                } else {
+                    header("Location: shopping.php");
+                }
+            } else {
+                header("Location: shopping.php");
+            }
         }
-    }
-    $_SESSION["cart"] = $cart; 
-    $_SESSION["qtyarray"] = $qty; 
+        if(isset($varadd) && !isset($varqty)){
+            header("Location: shopping.php");
+        } else {
+            if( isset($varadd)){
+                // now add the item to the cart
+                $sql = sprintf("INSERT INTO shopCartItem (cartItemID, productID, cartID, quantity) VALUES('0','%s','%s','%s')",$varadd,$cartId,$varqty);
+                $result = $conn->query($sql);
+                if ($result === FALSE) {
+                    header("Location: shopping.php");
+                } else {
+
+                }
+            } 
+            if( isset($varremove)) {
+                //then a remove item
+                $sql = sprintf("SELECT cartID FROM shoppingCart where userId='%s'",$userId);
+                $result = $conn->query($sql);
+                if( $result->num_rows > 0 ){
+                    $row = $result->fetch_assoc();
+                    $cartId = $row["cartID"];
+                    $sql = sprintf("DELETE FROM shopCartItem where cartID='%s' and cartItemID='%s'",$cartId,$varremove);
+                    $result = $conn->query($sql);
+                } else {
+                    header("Location: shopping.php");
+                }
+            }
+        }       
+    }    
 }
+
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
@@ -53,28 +92,35 @@ if( isset($varremove)){
                     </thead>
                     <tbody>
                     <?php
-                            $index = 0;
-                            $p = $_SESSION["product"];
-                            $pr = $_SESSION["price"];
-                            $img = $_SESSION["image"];
-                            $qty = $_SESSION["qtyarray"];
-                            $crt = $_SESSION["cart"];
-                            $totalall = 0;
-                            for($i=0; $i<count($crt); $i++){
-                                $j = $crt[$i];
-                                echo "<tr class=\"tablerow\">";
-                                echo "<td> <img src=\"img/shop/$img[$j]\" class=\"tableimage\" ></td>";
-                                echo "<td> $p[$j] </td>";
-                                $rnd = number_format((float)$pr[$j], 2, '.', '');
-                                echo "<td> $$rnd </td>";
-                                echo "<td> $qty[$i] </td>";
-                                $total = $pr[$j] * $qty[$i];
-                                $totalall = $totalall + $total;
-                                $rnd = number_format((float)$total, 2, '.', '');
-                                echo "<td> $$rnd </td>";
-                                echo "<td> <a href=\"cart.php?remove=$i\"><img src=\"img/trashcan.png\" width=\"42\" height=\"42\"></a> </td>";
-                                echo "</tr>";
-                                $index++;
+                            $totalall = 0;                            
+                            $sql = sprintf("SELECT * FROM shopCartItem where cartID='%s'",$cartId);
+                            $result = $conn->query($sql);
+                            if( $result->num_rows > 0 ){
+                                while($row = $result->fetch_assoc()) {
+                                    $productid = $row["productID"];
+                                    $quantity = $row["quantity"];
+                                    $cartItemId = $row["cartItemID"];
+                                    $psql = sprintf("SELECT * FROM products WHERE productID='%s'",$productid);
+                                    $res = $conn->query($psql);
+                                    if( $res->num_rows > 0 ){
+                                        $r = $res->fetch_assoc();
+                                        $p = $r["name"];
+                                        $pr = $r["price"];
+                                        $img = $r["picFileName"];
+                                        echo "<tr class=\"tablerow\">";
+                                        echo "<td> <img src=\"img/shop/$img\" class=\"tableimage\" ></td>";
+                                        echo "<td> $p </td>";
+                                        $rnd = number_format((float)$pr, 2, '.', '');
+                                        echo "<td> $$rnd </td>";
+                                        echo "<td> $quantity </td>";
+                                        $total = $pr * $quantity;
+                                        $totalall = $totalall + $total;
+                                        $rnd = number_format((float)$total, 2, '.', '');
+                                        echo "<td> $$rnd </td>";
+                                        echo "<td> <a href=\"cart.php?remove=$cartItemId\"><img src=\"img/trashcan.png\" width=\"42\" height=\"42\"></a> </td>";
+                                        echo "</tr>";
+                                    }
+                                }                               
                             }
                             echo "<tr class=\"tablerow\">";
                             echo "<td> <h3>Total:</h3> </td>"; 
