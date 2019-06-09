@@ -44,7 +44,7 @@
     </head> 
     <body> 
         <div class="titlediv">
-        <h1>Mikes Hardware & Stuff</h1><br>
+        <h1>Mike's Hardware & Stuff</h1><br>
         <h4>Login</h4>
             <?php
                 if( $iserror )

@@ -79,7 +79,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <body> 
         <div class="titlediv">
             <h4>Shopping Cart</h4>
-            <div class="tablediv">
+            <div class="tablediv cartbox">
                 <table>
                     <thead>
                         <tr>

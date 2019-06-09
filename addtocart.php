@@ -37,7 +37,7 @@ if (session_status() == PHP_SESSION_NONE) {
        <script src="js/myScript.js"></script>
     </head> 
     <body> 
-        <div class="titlediv">
+        <div class="titlediv addcartbox">
             <?php
             $p = $products;
             $pr = $prices;

@@ -1,9 +1,14 @@
 <?php
 // Start the session
+$varlogout = $_GET['logout'];
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 
     $userId = $_SESSION["userID"];
+    if(isset($varlogout)){
+        unset( $_SESSION["userID"]);
+        unset( $userId);
+    }
     if(! isset($userId)){
         header("Location: login.php");
     } else {
@@ -53,14 +58,16 @@ if (session_status() == PHP_SESSION_NONE) {
     </head> 
     <body> 
         <div class="titlediv">
-            <h1>Mikes Hardware & Stuff</h1>
+            <h1>Mike's Hardware & Stuff</h1>
            <div class="cartpos">
-                <a href="cart.php"><img src="img/cart.jpg" width="64" height="64"></a>
+                <a href="profile.php"><img src="img/profile.jpg" class="cartBtn"></a>
+                <a href="cart.php"><img src="img/cart.jpg" class="cartBtn"></a>
                 <?php
-                    echo "Items in Cart: $cnt<br>";
+                    echo "Items: $cnt";
                 ?>
+                <a href="shopping.php?logout=1"><img src="img/logout.jpg" class="cartBtn"></a>
            </div >
-           <div class="tablediv">
+           <div class="tablediv shoppingbox">
                 <table>
                     <thead>
                         <tr>
@@ -82,7 +89,7 @@ if (session_status() == PHP_SESSION_NONE) {
                                 echo "<td> $p[$i] </td>";
                                 $rnd = number_format((float)$pr[$i], 2, '.', '');
                                 echo "<td> $$rnd </td>";
-                                echo "<td> <a href=\"addtocart.php?addwhat=$id[$i]\"><img src=\"img/details.png\" width=\"188\" height=\"50\"></a> </td>";
+                                echo "<td> <a href=\"addtocart.php?addwhat=$id[$i]\"><img src=\"img/details.jpg\" class=\"detailBtn\"></a> </td>";
                                 echo "</tr>";
                                 $index++;
                             }                

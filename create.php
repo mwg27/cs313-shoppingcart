@@ -49,7 +49,7 @@
     </head> 
     <body> 
         <div class="titlediv">
-        <h1>Welcom to Mikes Hardware & Stuff</h1><br>
+        <h1>Welcome to Mike's Hardware & Stuff</h1><br>
         <h4>Create an account with us</h4>
         <?php
             if($iserror){

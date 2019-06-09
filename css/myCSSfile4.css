@@ -11,8 +11,8 @@
 }
 
 .tablediv {
-    padding-left: 100px;
-    width: 80%;
+    padding-left: 50px;
+    width: 800px;
 }
 
 .tblheader {
@@ -108,4 +108,80 @@ label {
 
 .errormsg {
     color: red;
+}
+
+.shoppingbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    margin-left: 15%;
+    margin-top: 20px;
+}
+
+.cartBtn {
+    margin-top: 10px;
+    width: 136px;
+    height: 50px;
+}
+
+.detailBtn {
+    width: 178px;
+    height: 50px;
+}
+
+.addcartbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    margin-left: 15%;
+    margin-top: 20px; 
+    width: 600px;
+}
+
+.cartbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    margin-left: 25%;
+    margin-top: 20px; 
+    width: 800px;
+}
+
+.profilebox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    margin-left: 25%;
+    margin-top: 20px; 
+    width: 570px;
+    text-align: left;
+}
+
+.profilepos{
+    width: 70%;
+    text-align: right;
+}
+
+.p1 {
+    width: 240px;
+}
+
+.p2 {
+    width: 165px;
+}
+
+.p3 {
+    width: 85px;
+}
+
+.p4 {
+    width: 75px;
+}
+.p5 {
+    width: 55px;
+}
+
+.checkoutbox {
+    border: 3px solid #080AA9;
+    border-radius: 10px;
+    margin-left: 35%;
+    margin-top: 20px; 
+    width: 570px;
+    text-align: left;
 }
